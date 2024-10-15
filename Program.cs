@@ -1,102 +1,101 @@
 using System;
 using System.Diagnostics;
-using System.Threading;
+using System.IO;
 using System.Net.Http;
+using System.Text;
 
 namespace CheatHunterBTR
 {
     class Program
     {
-        static int checkNumber = 0;
+        static string modFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "minecraft", "mods");
+        static string webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Замените на свой Webhook URL
+        static readonly HttpClient httpClient = new HttpClient();
 
-        static void Main(string[] args)
+        // Метод для отправки данных в Discord
+        static async void SendDataToDiscord(string javaExePath)
         {
-            Console.WriteLine("Введите свой никнейм:");
-            string nickname = Console.ReadLine();
-
-            Thread searchThread = new Thread(() =>
+            var data = new
             {
-                // Проверяем, запущен ли Minecraft
-                if (IsMinecraftRunning())
-                {
-                    Process[] javaProcesses = Process.GetProcessesByName("javaw");
+                content = $"Найден javaw.exe: {javaExePath}"
+            };
 
-                    if (javaProcesses.Length > 0)
-                    {
-                        foreach (Process javaProcess in javaProcesses)
-                        {
-                            ProcessModuleCollection modules = javaProcess.Modules;
+            var content = new StringContent(data.ToString(), Encoding.UTF8, "application/json");
 
-                            foreach (ProcessModule module in modules)
-                            {
-                                if (module.FileName.Contains("wallhack") ||
-                                    module.FileName.Contains("aimbot") ||
-                                    module.FileName.Contains("esp") ||
-                                    module.FileName.Contains("funtime"))
-                                {
-                                    Console.WriteLine("Мы нашли ПО!");
-                                    checkNumber++;
-                                    SendDiscordWebhook(nickname, checkNumber.ToString(), module.FileName);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Мы не нашли ПО.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Minecraft не запущен.");
-                }
-            });
-
-            searchThread.Start();
-            searchThread.Join();
-
-            Console.WriteLine("Нажмите Enter, чтобы закрыть чекер.");
-            Console.ReadKey();
-        }
-
-        // Функция для проверки запуска Minecraft
-        static bool IsMinecraftRunning()
-        {
-            // Проверяем наличие процесса "javaw" с названием "Minecraft.exe" или "MinecraftLauncher.exe"
-            foreach (Process process in Process.GetProcessesByName("javaw"))
+            try
             {
-                if (process.MainWindowTitle.Contains("Minecraft.exe") ||
-                    process.MainWindowTitle.Contains("MinecraftLauncher.exe"))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        static async void SendDiscordWebhook(string nickname, string checkNumber, string foundString)
-        {
-            // Заменяйте  это  на  свой  вебхук  Discord
-            string webhookUrl = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv";
-
-            // Создаем строку сообщения вручную
-            string jsonMessage = $"{{\"content\": \"Нашлось ПО\\nник: {nickname}\\nномер проверки: #{checkNumber}\\nстрока: {foundString}\"}}";
-
-            // Отправляем сообщение с помощью HttpClient
-            using (HttpClient client = new HttpClient())
-            {
-                var response = await client.PostAsync(webhookUrl, new StringContent(jsonMessage, System.Text.Encoding.UTF8, "application/json"));
+                var response = await httpClient.PostAsync(webhookUrl, content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine("Сообщение отправлено в Discord!");
+                    Console.WriteLine("Данные успешно отправлены в Discord.");
                 }
                 else
                 {
-                    Console.WriteLine($"Ошибка отправки сообщения в Discord: {response.StatusCode}");
+                    Console.WriteLine("Ошибка отправки данных в Discord.");
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+        }
+
+        static void Main(string[] _args)
+        {
+            Console.WriteLine("CheatHunterBTR запущен...");
+
+            // ... (Твой код из Program.cs)
+
+            // Цикл по всем процессам
+            Process[] allProcesses = Process.GetProcesses();
+
+            foreach (Process process in allProcesses)
+            {
+                // Проверяем, является ли процесс Javaw.exe
+                if (process.ProcessName.Equals("javaw"))
+                {
+                    string imageName = process.MainModule.FileName;
+
+                    // Проверка Image file name
+                    if (imageName.Contains("javaw.exe") &&
+                        !imageName.EndsWith("win32") &&
+                        !imageName.Contains("win32"))
+                    {
+                        string javaExePath = Path.GetDirectoryName(imageName);
+
+                        // Вывод пути к javaw.exe
+                        Console.WriteLine($"Путь к javaw.exe: {javaExePath}");
+
+                        // Отправить информацию о Javaw.exe в Discord
+                        SendDataToDiscord(javaExePath);
+
+                        // Дополнительная проверка на наличие запущенных Minecraft-процессов
+                        if (CheckMinecraftProcesses())
+                        {
+                            Console.WriteLine("Minecraft запущен!");
+                            // ... (Дополнительные действия)
+                        }
+                        break; // Выход из цикла, если путь найден
+                    }
+                }
+            }
+
+            // ... (Твой код из Program.cs)
+        }
+
+        // Метод проверки запущенных Minecraft-процессов
+        static bool CheckMinecraftProcesses()
+        {
+            Process[] processes = Process.GetProcessesByName("Minecraft");
+
+            if (processes.Length > 0)
+            {
+                return true; // Minecraft запущен
+            }
+            else
+            {
+                return false; // Minecraft не запущен
             }
         }
     }
