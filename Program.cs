@@ -1,102 +1,120 @@
 using System;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.IO.Compression;
 
 namespace CheatHunterBTR
 {
     class Program
     {
-        static string modFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "minecraft", "mods");
-        static string webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Замените на свой Webhook URL
-        static readonly HttpClient httpClient = new HttpClient();
-
-        // Метод для отправки данных в Discord
-        static async void SendDataToDiscord(string javaExePath)
+        static void Main(string[] args)
         {
-            var data = new
-            {
-                content = $"Найден javaw.exe: {javaExePath}"
+            // Список директорий, где искать javaw.exe
+            string[] directories = {
+                @"C:\Program Files\Java\",
+                @"C:\Program Files (x86)\Java\",
+                @"C:\Minecraft\",
+                @"C:\Users\Public\Documents\Minecraft\",
+
+                // Получаем путь к AppData текущего пользователя
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @".minecraft\"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"legacy\"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Lunar\"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $".tlauncher\"), // Добавили .tlauncher
+
+                // Динамический путь к .minecraft
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $".minecraft\\"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $".minecraft\\versions\\"), // Добавили versions
+                // ... (другие пути) ...
             };
 
-            var content = new StringContent(data.ToString(), Encoding.UTF8, "application/json");
+            // Список версий Minecraft
+            string[] minecraftVersions = {
+                "1.16.5", "1.17", "1.17.1", "1.18", "1.18.1", "1.19", "1.19.1", "1.19.2", "1.19.3",
+                "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6", "1.21"
+            };
 
-            try
-            {
-                var response = await httpClient.PostAsync(webhookUrl, content);
+            // Список модификаций
+            string[] modifications = {
+                "Fabric", "Forge", "ForgeOptifine", "Optifine", "Vanilla",
+                "Lunar Client", "LabyMod-3", "LabyMod-4", "Feather Client"
+            };
 
-                if (response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Данные успешно отправлены в Discord.");
-                }
-                else
-                {
-                    Console.WriteLine("Ошибка отправки данных в Discord.");
-                }
-            }
-            catch (Exception ex)
+            // Ищем javaw.exe
+            string javawPath = FindJavaw(directories, minecraftVersions, modifications);
+
+            // Проверяем, найден ли javaw.exe
+            if (javawPath != null)
             {
-                Console.WriteLine($"Ошибка: {ex.Message}");
+                Console.WriteLine($"Найден javaw.exe: {javawPath}");
             }
+            else
+            {
+                Console.WriteLine("javaw.exe не найден.");
+            }
+
+            // Ожидаем нажатия Enter
+            Console.WriteLine("Проверка завершена. Чтобы закрыть чекер, нажмите Enter.");
+            Console.ReadLine();
         }
 
-        static void Main(string[] _args)
+        // Функция поиска javaw.exe
+        static string FindJavaw(string[] directories, string[] minecraftVersions, string[] modifications)
         {
-            Console.WriteLine("CheatHunterBTR запущен...");
-
-            // ... (Твой код из Program.cs)
-
-            // Цикл по всем процессам
-            Process[] allProcesses = Process.GetProcesses();
-
-            foreach (Process process in allProcesses)
+            foreach (string directory in directories)
             {
-                // Проверяем, является ли процесс Javaw.exe
-                if (process.ProcessName.Equals("javaw"))
+                // Проверяем, существует ли директория
+                if (Directory.Exists(directory))
                 {
-                    string imageName = process.MainModule.FileName;
-
-                    // Проверка Image file name
-                    if (imageName.Contains("javaw.exe") &&
-                        !imageName.EndsWith("win32") &&
-                        !imageName.Contains("win32"))
+                    // Рекурсивный обход директории
+                    foreach (string subdirectory in Directory.EnumerateDirectories(directory, "*", SearchOption.AllDirectories))
                     {
-                        string javaExePath = Path.GetDirectoryName(imageName);
-
-                        // Вывод пути к javaw.exe
-                        Console.WriteLine($"Путь к javaw.exe: {javaExePath}");
-
-                        // Отправить информацию о Javaw.exe в Discord
-                        SendDataToDiscord(javaExePath);
-
-                        // Дополнительная проверка на наличие запущенных Minecraft-процессов
-                        if (CheckMinecraftProcesses())
+                        // Проверяем, содержит ли директория Minecraft версии
+                        foreach (string version in minecraftVersions)
                         {
-                            Console.WriteLine("Minecraft запущен!");
-                            // ... (Дополнительные действия)
+                            if (subdirectory.Contains(version))
+                            {
+                                // Проверяем, содержит ли директория модификации
+                                foreach (string modification in modifications)
+                                {
+                                    if (subdirectory.Contains(modification))
+                                    {
+                                        // Проверяем, существует ли javaw.exe в директории
+                                        string javawPath = Path.Combine(subdirectory, "javaw.exe");
+                                        if (File.Exists(javawPath))
+                                        {
+                                            return javawPath;
+                                        }
+
+                                        // Дополнительная проверка .jar файлов в version
+                                        if (subdirectory.Contains("versions") && Directory.Exists(subdirectory))
+                                        {
+                                            foreach (string jarFile in Directory.EnumerateFiles(subdirectory, "*.jar"))
+                                            {
+                                                using (ZipArchive archive = ZipFile.OpenRead(jarFile))
+                                                {
+                                                    foreach (ZipArchiveEntry entry in archive.Entries)
+                                                    {
+                                                        if (entry.Name.EndsWith("javaw.exe", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            return Path.Combine(subdirectory, jarFile, entry.FullName);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        break; // Выход из цикла, если путь найден
                     }
                 }
             }
 
-            // ... (Твой код из Program.cs)
-        }
-
-        // Метод проверки запущенных Minecraft-процессов
-        static bool CheckMinecraftProcesses()
-        {
-            Process[] processes = Process.GetProcessesByName("Minecraft");
-
-            if (processes.Length > 0)
-            {
-                return true; // Minecraft запущен
-            }
-            else
-            {
-                return false; // Minecraft не запущен
-            }
+            // javaw.exe не найден
+            return null;
         }
     }
 }
