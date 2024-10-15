@@ -1,104 +1,113 @@
 using System;
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
+using System.Management;
+using System.Security.Principal;
 using System.Net.Http;
-using System.Text;
-using Newtonsoft.Json;
 
 namespace CheatHunterBTR
 {
     class Program
     {
-        static string modFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "minecraft", "mods");
-        static string webhookUrl = "YOUR_DISCORD_WEBHOOK_URL"; // Замените на свой Webhook URL
-        static readonly HttpClient httpClient = new HttpClient();
+        // Токен Webhook Discord
+        private static string DiscordWebhookUrl = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv";
 
-        // Метод для отправки данных в Discord
-        static async void SendDataToDiscord(string javaExePath)
+        // Счетчик проверок
+        private static int checkCount = 0;
+
+        static void Main(string[] args)
         {
-            var data = new
+            // Проверка прав доступа
+            if (!IsAdministrator())
             {
-                content = $"Найден javaw.exe: {javaExePath}"
+                Console.WriteLine("Для работы программы необходимы права администратора.");
+                Console.WriteLine("Запустите программу от имени администратора.");
+                return;
+            }
+
+            // Получение ника игрока от пользователя
+            Console.WriteLine("Введите никнейм игрока:");
+            string playerNickname = Console.ReadLine();
+
+            // Поиск процесса javaw.exe
+            Process javaProcess = FindJavaProcess();
+            if (javaProcess == null)
+            {
+                Console.WriteLine("Процесс javaw.exe не найден. Minecraft не запущен?");
+                return;
+            }
+
+            // Поиск строк в памяти процесса
+            string[] foundStrings = SearchStringsInProcess(javaProcess.Id, playerNickname);
+
+            // Отправка лога в Discord
+            if (foundStrings != null && foundStrings.Length > 0)
+            {
+                SendDiscordLog(playerNickname, foundStrings);
+            }
+
+            // Сообщение о завершении проверки
+            Console.WriteLine("Проверка завершена. Нажмите ENTER, чтобы закрыть.");
+            Console.ReadKey(); // Ожидание нажатия ENTER
+        }
+
+        static Process FindJavaProcess()
+        {
+            // Получить список всех запущенных процессов
+            Process[] processes = Process.GetProcessesByName("javaw.exe");
+
+            // Выбрать процесс Java, если он найден
+            return processes.FirstOrDefault();
+        }
+
+        static string[] SearchStringsInProcess(int processId, string playerNickname)
+        {
+            // Получить объект управления процессом
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE ProcessId = " + processId);
+            ManagementObject processObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
+            if (processObject == null)
+            {
+                Console.WriteLine("Не удалось получить объект процесса Java.");
+                return null;
+            }
+
+            // Получить список строк из памяти процесса
+            string[] strings = processObject.GetPropertyValue("CommandLine") as string[];
+            if (strings == null)
+            {
+                Console.WriteLine("Не удалось получить список строк из памяти.");
+                return null;
+            }
+
+            // Список строк для поиска
+            string[] searchStrings = new string[] { "funtime", "cheat", playerNickname };
+
+            // Найти строки, содержащие искомые значения
+            return strings.Where(s => searchStrings.Any(searchString => s.Contains(searchString))).ToArray();
+        }
+
+        static void SendDiscordLog(string playerNickname, string[] foundStrings)
+        {
+            // Формирование данных для отправки в Discord
+            var logData = new
+            {
+                content = $"**Проверка {++checkCount}**\nНикнейм: {playerNickname}\nНайденные строки:\n" +
+                          string.Join("\n", foundStrings)
             };
 
-            var json = JsonConvert.SerializeObject(data); // Удаление JSON-преобразования
-            var content = new StringContent(json, Encoding.UTF8, "application/json"); // Удаление JSON-формата
-
-            try
+            using (var client = new HttpClient())
             {
-                var response = await httpClient.PostAsync(webhookUrl, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Данные успешно отправлены в Discord.");
-                }
-                else
-                {
-                    Console.WriteLine("Ошибка отправки данных в Discord.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка: {ex.Message}");
+                var content = new StringContent(logMessage, System.Text.Encoding.UTF8, "application/json");
+                client.PostAsync(DiscordWebhookUrl, content).ConfigureAwait(false);
             }
         }
 
-        static void Main(string[] _args)
+        // Функция для проверки прав администратора
+        static bool IsAdministrator()
         {
-            Console.WriteLine("CheatHunterBTR запущен...");
-
-            // ... (Твой код из Program.cs)
-
-            // Цикл по всем процессам
-            Process[] allProcesses = Process.GetProcesses();
-
-            foreach (Process process in allProcesses)
-            {
-                // Проверяем, является ли процесс Javaw.exe
-                if (process.ProcessName.Equals("javaw"))
-                {
-                    string imageName = process.MainModule.FileName;
-
-                    // Проверка Image file name
-                    if (imageName.Contains("javaw.exe") &&
-                        !imageName.EndsWith("win32") &&
-                        !imageName.Contains("win32"))
-                    {
-                        string javaExePath = Path.GetDirectoryName(imageName);
-
-                        // Вывод пути к javaw.exe
-                        Console.WriteLine($"Путь к javaw.exe: {javaExePath}");
-
-                        // Отправить информацию о Javaw.exe в Discord
-                        SendDataToDiscord(javaExePath);
-
-                        // Дополнительная проверка на наличие запущенных Minecraft-процессов
-                        if (CheckMinecraftProcesses())
-                        {
-                            Console.WriteLine("Minecraft запущен!");
-                            // ... (Дополнительные действия)
-                        }
-                        break; // Выход из цикла, если путь найден
-                    }
-                }
-            }
-
-            // ... (Твой код из Program.cs)
-        }
-
-        // Метод проверки запущенных Minecraft-процессов
-        static bool CheckMinecraftProcesses()
-        {
-            Process[] processes = Process.GetProcessesByName("Minecraft");
-
-            if (processes.Length > 0)
-            {
-                return true; // Minecraft запущен
-            }
-            else
-            {
-                return false; // Minecraft не запущен
-            }
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
