@@ -4,20 +4,18 @@ using System.Linq;
 using System.Management;
 using System.Security.Principal;
 using System.Net.Http;
+using System.IO;
 
 namespace CheatHunterBTR
 {
     class Program
     {
-        // Токен Webhook Discord
         private static string DiscordWebhookUrl = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv";
 
-        // Счетчик проверок
         private static int checkCount = 0;
 
         static void Main(string[] args)
         {
-            // Проверка прав доступа
             if (!IsAdministrator())
             {
                 Console.WriteLine("Для работы программы необходимы права администратора.");
@@ -25,44 +23,45 @@ namespace CheatHunterBTR
                 return;
             }
 
-            // Получение ника игрока от пользователя
-            Console.WriteLine("Введите никнейм игрока:");
+            Console.WriteLine("Введите свой никнейм в игре!:");
             string playerNickname = Console.ReadLine();
 
-            // Поиск процесса javaw.exe
-            Process javaProcess = FindJavaProcess();
-            if (javaProcess == null)
+            int javaProcessId = FindJavaProcessId();
+            if (javaProcessId == -1)
             {
-                Console.WriteLine("Процесс javaw.exe не найден. Minecraft не запущен?");
+                Console.WriteLine("Процесс javaw.exe не найден...");
+                Console.ReadKey();
                 return;
             }
 
-            // Поиск строк в памяти процесса
-            string[] foundStrings = SearchStringsInProcess(javaProcess.Id, playerNickname);
+            string[] foundStrings = SearchStringsInProcess(javaProcessId, playerNickname);
 
-            // Отправка лога в Discord
             if (foundStrings != null && foundStrings.Length > 0)
             {
                 SendDiscordLog(playerNickname, foundStrings);
             }
 
-            // Сообщение о завершении проверки
             Console.WriteLine("Проверка завершена. Нажмите ENTER, чтобы закрыть.");
-            Console.ReadKey(); // Ожидание нажатия ENTER
+            Console.ReadKey();
         }
 
-        static Process FindJavaProcess()
+        static int FindJavaProcessId()
         {
-            // Получить список всех запущенных процессов
-            Process[] processes = Process.GetProcessesByName("javaw.exe");
 
-            // Выбрать процесс Java, если он найден
-            return processes.FirstOrDefault();
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT ProcessId, Name FROM Win32_Process WHERE Name = 'javaw.exe'");
+            ManagementObjectCollection processes = searcher.Get();
+
+            foreach (ManagementObject process in processes)
+            {
+                return (int)process["ProcessId"];
+            }
+
+            return -1;
         }
 
         static string[] SearchStringsInProcess(int processId, string playerNickname)
         {
-            // Получить объект управления процессом
+
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE ProcessId = " + processId);
             ManagementObject processObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
             if (processObject == null)
@@ -71,7 +70,6 @@ namespace CheatHunterBTR
                 return null;
             }
 
-            // Получить список строк из памяти процесса
             string[] strings = processObject.GetPropertyValue("CommandLine") as string[];
             if (strings == null)
             {
@@ -79,30 +77,23 @@ namespace CheatHunterBTR
                 return null;
             }
 
-            // Список строк для поиска
             string[] searchStrings = new string[] { "funtime", "cheat", playerNickname };
 
-            // Найти строки, содержащие искомые значения
             return strings.Where(s => searchStrings.Any(searchString => s.Contains(searchString))).ToArray();
         }
 
         static void SendDiscordLog(string playerNickname, string[] foundStrings)
         {
-            // Формирование данных для отправки в Discord
-            var logData = new
-            {
-                content = $"**Проверка {++checkCount}**\nНикнейм: {playerNickname}\nНайденные строки:\n" +
-                          string.Join("\n", foundStrings)
-            };
+            string logMessage = $"**Проверка {++checkCount}**\nНикнейм: {playerNickname}\nНайденные строки:\n" +
+                               string.Join("\n", foundStrings);
 
             using (var client = new HttpClient())
             {
-                var content = new StringContent(logMessage, System.Text.Encoding.UTF8, "application/json");
+                var content = new StringContent(logMessage, System.Text.Encoding.UTF8, "text/plain");
                 client.PostAsync(DiscordWebhookUrl, content).ConfigureAwait(false);
             }
         }
 
-        // Функция для проверки прав администратора
         static bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
