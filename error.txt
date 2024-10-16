@@ -1,81 +1,78 @@
 Серьезность	Код	Описание	Проект	Файл	Строка	Состояние подавления	Подробности
-Ошибка (активно)	CS0103	Имя "DiscordWebhookUrl" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	349		
-Ошибка (активно)	CS0161	"Program.LoadSearchStrings()": не все пути к коду возвращают значение.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	124		
-Ошибка (активно)	CS1503	Аргумент 1: не удается преобразовать из "int" в "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	195		
-Ошибка (активно)	CS1503	Аргумент 1: не удается преобразовать из "int" в "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
-Ошибка (активно)	CS0103	Имя "BG" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS0103	Имя "checkCount" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	342		
-Ошибка (активно)	CS0103	Имя "D" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS0103	Имя "DD" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS0103	Имя "G" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
+Ошибка (активно)	CS0103	Имя "BG" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS0161	"Program.LoadSearchStrings()": не все пути к коду возвращают значение.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	126		
+Ошибка (активно)	CS1503	Аргумент 1: не удается преобразовать из "int" в "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	197		
+Ошибка (активно)	CS1503	Аргумент 1: не удается преобразовать из "int" в "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	223		
+Ошибка (активно)	CS0103	Имя "checkCount" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	344		
+Ошибка (активно)	CS0103	Имя "D" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS0103	Имя "DD" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS0103	Имя "DiscordWebhookUrl" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	351		
+Ошибка (активно)	CS0103	Имя "G" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
 Ошибка (активно)	CS0103	Имя "IsAdministrator" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	22		
-Ошибка (активно)	CS0103	Имя "JF" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
-Ошибка (активно)	IDE1007	Имя "searchStrings" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	336		
+Ошибка (активно)	CS0103	Имя "JF" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
+Ошибка (активно)	IDE1007	Имя "searchStrings" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	338		
 Ошибка (активно)	CS0103	Имя "SendDiscordLog" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	56		
-Ошибка (активно)	CS0103	Имя "T" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS0103	Имя "T" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS0103	Имя "TdTjT" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS0103	Имя "w" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS0103	Имя "wBD" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS1597	Использование точки с запятой после блока метода или доступа недопустимо.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	334		
-Сообщение (активно)	IDE0019	Используйте сопоставление шаблонов	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	110		
-Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	218		
+Ошибка (активно)	CS0103	Имя "T" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS0103	Имя "T" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS0103	Имя "TdTjT" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS0103	Имя "w" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
+Ошибка (активно)	CS0103	Имя "wBD" не существует в текущем контексте.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1597	Использование точки с запятой после блока метода или доступа недопустимо.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	336		
 Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS8370	Компонент "оператор index" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS8998	Литерал необработанной строки не начинается с достаточного количества символов кавычек, чтобы разрешить использовать такое же количество последовательных символов кавычек в качестве содержимого.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS1950	Наиболее подходящий перегруженный метод Add "HashSet<string>.Add(string)" для инициализатора набора содержит недопустимые аргументы.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	195		
-Ошибка (активно)	CS1950	Наиболее подходящий перегруженный метод Add "HashSet<string>.Add(string)" для инициализатора набора содержит недопустимые аргументы.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
-Ошибка (активно)	CS0246	Не удалось найти тип или имя пространства имен "T" (возможно, отсутствует директива using или ссылка на сборку).	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1519	Недопустимый токен ";" в объявлении класса, записи, структуры или элемента интерфейса	CheatHunterBTR, CheatHunterBTR	C:\CheatHunterBTR\Program.cs	336		
-Ошибка (активно)	CS1519	Недопустимый токен "return" в объявлении класса, записи, структуры или элемента интерфейса	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	336		
-Ошибка (активно)	CS8997	Незавершенный литерал необработанной строки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS8997	Незавершенный литерал необработанной строки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	218		
-Ошибка (активно)	CS1009	Нераспознанная escape-последовательность	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	168		
-Ошибка (активно)	CS1009	Нераспознанная escape-последовательность	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	273		
-Ошибка (активно)	CS0019	Оператор "<" невозможно применить к операнду типа "string" и "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS0656	Отсутствует обязательный для компилятора член "System.Index..ctor"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1040	Перед директивами препроцессору могут находиться только пробельные знаки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Предупреждение (активно)	CS0168	Переменная "TFTLTRTXT4T" объявлена, но ни разу не использована.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1012	Превышение допустимого числа символов в символьной константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS0518	Предопределенный тип "System.Index" не определен или не импортирован	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS0116	Пространство имен не может напрямую включать в себя такие элементы, как методы или операторы	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	339		
-Ошибка (активно)	CS0116	Пространство имен не может напрямую включать в себя такие элементы, как методы или операторы	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	354		
+Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	220		
+Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS8370	Компонент "литералы необработанных строк" недоступен в C# 7.3. Используйте версию языка 11.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS8370	Компонент "оператор index" недоступен в C# 7.3. Используйте версию языка 8.0 или выше.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS8998	Литерал необработанной строки не начинается с достаточного количества символов кавычек, чтобы разрешить использовать такое же количество последовательных символов кавычек в качестве содержимого.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1950	Наиболее подходящий перегруженный метод Add "HashSet<string>.Add(string)" для инициализатора набора содержит недопустимые аргументы.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	197		
+Ошибка (активно)	CS1950	Наиболее подходящий перегруженный метод Add "HashSet<string>.Add(string)" для инициализатора набора содержит недопустимые аргументы.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	223		
+Ошибка (активно)	CS0246	Не удалось найти тип или имя пространства имен "T" (возможно, отсутствует директива using или ссылка на сборку).	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1519	Недопустимый токен ";" в объявлении класса, записи, структуры или элемента интерфейса	CheatHunterBTR, CheatHunterBTR	C:\CheatHunterBTR\Program.cs	338		
+Ошибка (активно)	CS1519	Недопустимый токен "return" в объявлении класса, записи, структуры или элемента интерфейса	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	338		
+Ошибка (активно)	CS8997	Незавершенный литерал необработанной строки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
+Ошибка (активно)	CS8997	Незавершенный литерал необработанной строки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	220		
+Ошибка (активно)	CS1009	Нераспознанная escape-последовательность	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	170		
+Ошибка (активно)	CS1009	Нераспознанная escape-последовательность	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	275		
+Ошибка (активно)	CS0019	Оператор "<" невозможно применить к операнду типа "string" и "string".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS0656	Отсутствует обязательный для компилятора член "System.Index..ctor"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1040	Перед директивами препроцессору могут находиться только пробельные знаки.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Предупреждение (активно)	CS0168	Переменная "TFTLTRTXT4T" объявлена, но ни разу не использована.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1012	Превышение допустимого числа символов в символьной константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
+Ошибка (активно)	CS0518	Предопределенный тип "System.Index" не определен или не импортирован	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS0116	Пространство имен не может напрямую включать в себя такие элементы, как методы или операторы	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	341		
+Ошибка (активно)	CS0116	Пространство имен не может напрямую включать в себя такие элементы, как методы или операторы	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	356		
 Сообщение (активно)	IDE0044	Сделать поле доступным только для чтения	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	17		
-Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	158		
-Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
-Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
-Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	312		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	158		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	195		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	195		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	217		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	218		
+Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	160		
+Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
+Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
+Ошибка (активно)	CS1010	Символ новой строки в константе.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	314		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	160		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	197		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	197		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	219		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	220		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
 Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
-Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1026	Требуется ")"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	229		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	221		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	223		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	223		
+Ошибка (активно)	CS1003	Синтаксическая ошибка, требуется ","	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1026	Требуется ")"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	231		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	232		
@@ -121,10 +118,10 @@
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	272		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	273		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	275		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	277		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	278		
@@ -142,9 +139,9 @@
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	290		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	291		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
-Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	293		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	295		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	296		
@@ -185,8 +182,8 @@
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	331		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	332		
 Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	333		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	229		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	334		
+Ошибка (активно)	CS1002	Требуется ";".	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	335		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	231		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	232		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	233		
@@ -230,8 +227,8 @@
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	271		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	272		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	273		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	274		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	275		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	276		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	277		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	278		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	279		
@@ -247,8 +244,8 @@
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	289		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	290		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	291		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	292		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	293		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	294		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	295		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	296		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	297		
@@ -266,8 +263,8 @@
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	309		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	310		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	311		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	312		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	313		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	314		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	315		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	316		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	317		
@@ -287,5 +284,7 @@
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	331		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	332		
 Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	333		
-Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR, CheatHunterBTR	C:\CheatHunterBTR\Program.cs	228		
-Ошибка (активно)	CS1022	Требуется определение типа или пространства имен, либо признак конца файла.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	361		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	334		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	335		
+Ошибка (активно)	CS1513	Требуется "}"	CheatHunterBTR, CheatHunterBTR	C:\CheatHunterBTR\Program.cs	230		
+Ошибка (активно)	CS1022	Требуется определение типа или пространства имен, либо признак конца файла.	CheatHunterBTR	C:\CheatHunterBTR\Program.cs	363		
