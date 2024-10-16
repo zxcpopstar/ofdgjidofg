@@ -1,363 +1,184 @@
 using System;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Management;
-using System.Security.Principal;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Management;
 
-namespace CheatHunterBTR
+namespace CheckStrings
 {
     class Program
     {
-        // Токен Webhook Discord
-        private static readonly string DiscordWebhookUrl = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv";
+        static int checkNumber = 0;
 
-        // Счетчик проверок
-        private static int checkCount = 0;
-
-        static void Main(string[] _args) // Изменил args на _args 
+        // Массив шаблонов (регулярных выражений) - *важно* исправьте их!
+        private static readonly string[] patterns =
         {
-            // Проверка прав доступа
-            if (!IsAdministrator())
+            @"funtime",
+            @"\vmdoqhEwxdPU",
+            @"H]vaivPBy\[dIRvLHv", // Правильно экранирован
+            @"rVXAjswRuyTFWaV",
+            @"DNiqO;ae2)2^HEC",
+            @"mXs_os_Pig^o]R]OgS",
+            @"i^HTJ06MQ>K",
+            @"_jc\\", // Важно! обратный слеш экранирует \
+            @"cQxjrTsCXNfroQAk",
+            @"vFokMOqak_MULU",
+            @"psKoqaK",
+            @"r&SF\[!]", // Не забудьте экранирование!
+            @"LZ L\-\.iRLT \[CF6]", // Экранируйте -
+            @"W_lk<Ifo\[2mVqo",
+            @"OS7skZ72v\]oan\_0ZaV",
+            @"^rtS&sj<k82",
+            @"\.Ln1A4<cH3\_UD", // Экранирование .
+            @"YqKZr5&I\dqLSfy\(i", // Экранирование (
+            @"ZXJdf\)P\+xfvWSj", // Экранирование ) и +
+            @"uZ3ot\]43\#'XctU\[", // Экранирование ] и #
+            @"nb\(:\PbrO\(2", // Экранирование (
+            @"\(Laps\;IIZZZ\)Vjav" // Экранирование ( и ;
+            // ... добавьте все остальные шаблоны ...
+        };
+
+        static void Main(string[] args)
+        {
+
+            // Ввод ника
+            Console.Write("Введите ник: ");
+            string nickname = Console.ReadLine();
+
+            // Увеличение номера проверки
+            checkNumber++;
+            Console.WriteLine($"Номер проверки: #{checkNumber}");
+
+            // Поиск javaw.exe
+            Process javawProcess = FindJavawProcess();
+
+            if (javawProcess != null)
             {
-                Console.WriteLine("Для работы программы необходимы права администратора.");
-                Console.WriteLine("Запустите программу от имени администратора.");
-                return;
+                Console.WriteLine($"Найден процесс javaw: {javawProcess.ProcessName} (PID: {javawProcess.Id})");
+                Console.WriteLine("Ищем...");
+
+                SendDiscordMessage(nickname, checkNumber, patterns);
             }
-
-            // Получение ника игрока от пользователя
-            Console.WriteLine("Введите никнейм игрока:");
-            string playerNickname = Console.ReadLine();
-
-            // Поиск PID процесса javaw.exe
-            int javaProcessId = FindJavaProcessId();
-            if (javaProcessId == -1)
+            else
             {
-                Console.WriteLine("Процесс javaw.exe не найден. Введите PID процесса javaw.exe вручную:");
-                string pidInput = Console.ReadLine();
-                if (int.TryParse(pidInput, out javaProcessId))
+                Console.WriteLine("Процесс javaw не найден.");
+                // Просим ввести PID вручную или получить его из System Informer
+                int pid = GetPidFromUserOrSystemInformer();
+                if (pid != 0)
                 {
-                    Console.WriteLine("PID получен.");
+                    // Если PID получен успешно, пытаемся получить процесс
+                    javawProcess = Process.GetProcessById(pid);
+                    if (javawProcess != null)
+                    {
+                        Console.WriteLine($"Найден процесс javaw по PID: {pid}");
+                        Console.WriteLine("Ищем...");
+
+                        // Отправляем сообщение в Discord без проверки файла
+                        SendDiscordMessage(nickname, checkNumber, patterns);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Не удалось найти процесс javaw по PID: {pid}");
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Неверный PID.");
-                    return;
+                    Console.WriteLine("Не удалось найти javaw по PID.");
                 }
             }
 
-            // Поиск строк в памяти процесса
-            string[] foundStrings = SearchStringsInProcess(javaProcessId);
-
-            // Отправка лога в Discord
-            if (foundStrings != null && foundStrings.Length > 0)
-            {
-                SendDiscordLog(playerNickname, foundStrings);
-            }
-
-            // Сообщение о завершении проверки
-            Console.WriteLine("Проверка завершена. Нажмите ENTER, чтобы закрыть.");
-            Console.ReadKey(); // Ожидание нажатия ENTER
+            Console.ReadKey();
         }
 
-        static int FindJavaProcessId()
+        // Метод для поиска процесса javaw.exe
+        static Process FindJavawProcess()
         {
-            // Использовать tasklist для поиска PID процесса Java (с использованием внешней команды)
+            foreach (Process process in Process.GetProcesses())
+            {
+                if (process.ProcessName == "javaw")
+                {
+                    return process;
+                }
+            }
+            return null; // Процесс не найден
+        }
+
+        // Метод для получения PID от пользователя или из System Informer
+        static int GetPidFromUserOrSystemInformer()
+        {
+            Console.Write("Введите PID javaw.exe или нажмите Enter для поиска в System Informer: ");
+            string input = Console.ReadLine();
+            if (!string.IsNullOrEmpty(input))
+            {
+                // Введен PID
+                if (int.TryParse(input, out int pid))
+                {
+                    return pid;
+                }
+                else
+                {
+                    Console.WriteLine("Некорректный формат PID.");
+                    return 0;
+                }
+            }
+            else
+            {
+                // Поиск в System Informer
+                return GetPidFromSystemInformer();
+            }
+        }
+
+        // Метод для получения PID из System Informer
+        static int GetPidFromSystemInformer()
+        {
             try
             {
-                // Запускаем команду tasklist и фильтруем по "javaw.exe"
-                string command = "tasklist | findstr /i \"javaw.exe\"";
-                Process process = new Process();
-                process.StartInfo.FileName = "cmd.exe";
-                process.StartInfo.Arguments = "/c " + command;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.Start();
-                string pidString = process.StandardOutput.ReadLine();
-                process.WaitForExit();
-
-                if (!string.IsNullOrEmpty(pidString))
+                // Запрос к WMI для получения информации о процессе javaw.exe
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT ProcessId FROM Win32_Process WHERE Name = 'javaw.exe'");
+                foreach (ManagementObject mo in searcher.Get())
                 {
-                    // Выделение PID из строки, например, "javaw.exe      1234 Console"
-                    string[] parts = pidString.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length >= 2 && int.TryParse(parts[1], out int pid))
-                    {
-                        return pid;
-                    }
+                    return (int)mo["ProcessId"];
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при получении PID: {ex.Message}");
+                Console.WriteLine($"Ошибка при получении PID из System Informer: {ex.Message}");
             }
-
-            return -1;
+            return 0; // PID не найден
         }
 
-        static string[] SearchStringsInProcess(int processId)
+        // Метод для отправки сообщения в Discord Webhook
+        static async void SendDiscordMessage(string nickname, int checkNumber, string[] patterns)
         {
-            // Получить объект управления процессом
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + processId);
+            // Webhook URL
+            string webhookUrl = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv";
 
-            // Получить список строк из памяти процесса
-            List<string> strings = new List<string>();
-            foreach (ManagementObject mo in searcher.Get().Cast<ManagementObject>()) // Исправлено приведение
+            foreach (string pattern in patterns)
             {
-                if (mo["CommandLine"] != null)
+                // Проверяем, соответствуют ли шаблоны  никам в  patterns
+                bool isMatch = Regex.IsMatch(nickname, pattern);
+                if (isMatch)
                 {
-                    strings.Add(mo["CommandLine"].ToString());
+                    using (var client = new HttpClient())
+                    {
+                        var content = new StringContent($"{nickname} ; #{checkNumber} ; {pattern}");
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                        var response = await client.PostAsync(webhookUrl, content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Сообщение успешно отправлено в Discord.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Ошибка при отправке сообщения в Discord: {response.StatusCode}");
+                        }
+                    }
                 }
             }
-
-            if (strings.Count == 0)
-            {
-                Console.WriteLine("Не удалось получить список строк из памяти.");
-                return null;
-            }
-
-            // Загрузить список строк для поиска 
-            HashSet<string> searchStrings = LoadSearchStrings();
-
-            // Найти строки, содержащие искомые значения
-            return strings.Where(s => searchStrings.Contains(s)).ToArray();
-        }
-
-        static HashSet<string> LoadSearchStrings()
-        {
-            // Загрузить список строк для поиска 
-            HashSet<string> searchStrings = new HashSet<string>()
-            {
-                "FunTime",
-                "Legit",
-                "Karma",
-                "Dream",
-                "Entropy",
-                "Drip",
-                "Vape",
-                "Akira",
-                "Rise",
-                "Cortex",
-                "Ammit",
-                "Doomsday",
-                "Rockstar Legit",
-                "vZenWare",
-                "Troxill",
-                "Nursultan",
-                "Celestial",
-                "Expensive",
-                "Rockstar",
-                "Wild",
-                "Minced",
-                "Fuze Client",
-                "Arbuz Client",
-                "\vmdoqhEwxdPU",
-                "H]vaivPBy[dIRvLHv",
-                "rVXAjswRuyTFWaV",
-                "DNiqO;ae2)2^HEC",
-                "mXs_os_Pig^o]R]OgS",
-                "i^HTJ06MQ>K",
-                "_jc\",
-                "cQxjrTsCXNfroQAk",
-                "vFokMOqak_MULU",
-                "psKoqaK",
-                "r&SF[!",
-                "LZ L-.iRLT [CF6",
-                "W_lk<Ifo[2mVqo",
-                "OS7skZ72v]oan_0ZaV",
-                "^rtS&sj<k82",
-                ".Ln1A4<cH3_UD",
-                "YqKZr5&I\dqLSfy(i",
-                "ZXJdf)P+xfvWSj",
-                "uZ3ot]43#'XctU[",
-                "nb(:PbrO(2",
-                "(Laps;IIZZZ)Vjav",
-                "Du[Gxt[JuWTOInEHB",
-                "rc^SoAMohrofl_G",
-                "kZDBQbP",
-                "XCjdxJW[lXGxAlYjLO",
-                ",+vk%S[ir_nZL8'K!7X",
-                "<-8dd",
-                ":79Q",
-                "com.oiseth.doomsday",
-                "EXGFEZGQCEDwHBID",
-                "nfuTQLVsKir",
-                "LPkS5tf5Nu2yS:",
-                "redefined class",
-                "n:s.v",
-                "URZtR@t",
-                "getEventButtonState",
-                "SCHEDULED_EXECUTABES",
-                "hLit/unimi/dsi/fastutil/objects/Object2DoubleMap<Lnet/minecraft/tags/ITag<Lnet/minecraft/fluid/Fluid;>;>;",
-                "exitsave",
-                ":|:",
-                "71KD",
-                "HNtXxl",
-                "--LLdd5522",
-                "-%0"0"-%-%-%4%4%4%0%0%",
-                "HhhHHh)DO>OD",
-                "ZS'1|",
-                "Troxil",
-                "radioegor146",
-                "ZDCoder",
-                "(Ljava/lang/String;FFFFZ)",
-                "CortexConfig",
-                ".]+5+]5",
-                "71KD",
-                "(Ljava/lang/Object;ZI",
-                "(Ljava/lang/String;)V",
-                "]]]]10]]]]",
-                "99]]]]]]10",
-                "9910]]]]]]]]_]]]]",
-                "eL-9bH+T]]] ",
-                "H+7P2j9FVp1qru6qpnQj8DXs8hvsaZXYO++MyjQVBa0=",
-                "]]]]10]]]] ",
-                "eL-9bH+T]]]",
-                "]]]]++Z",
-                "]]]]]%",
-                "(Ljava/lang/String;IILjava/lang/String;I)V/l}",
-                ")"""w'""""""""""""""3s'"""""33s""&"",
-                """"23#"!"""11<#null>"'"",
-                """""""""""""""""""""""""""""""""""""""""r'""""""r'""""""""""""""""""""""""B$""""""D$""""""D$""""""D$"""""BD$""""""D""""""BD"""""""$"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""D$""""w"D$""""wBD$"""""BD$"""""DD$"""""BD$"""""BG$""<#null>BD"""""""""""""""""R"""""""U%""""""R"""""""""""""",
-                "--LLdd5522",
-                "-%0"0"-%-%-%4%4%4%0%0%",
-                "!!5!27654'!5!27654'!5!",
-                "]]?10]]]]",
-                "]]]]]]]]++++++10",
-                "?]]]]",
-                "22/+^]]++",
-                "99^]]]]",
-                "T"T(T.T4T:T @TFTLTRTXT4T^TdTjT",
-                "3t3t3t3t3t3t3t3t4",
-                "_^]++++",
-                "?10^]]]]]]]]]]]^]]]]]]%",
-                "99?_]10]]]]]]]]]]",
-                "_q]q]]q]+++++",
-                "]]]]_]10]]]]]]]",
-                ".]+5+]5pastebin",
-                "]]]+4]",
-                "5+]5]]q",
-                "10^]^]]]!!46",
-                ",Lnet/labymod/ingamechat/tabs/GuiChatSymbols;",
-                "7Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/Long;>;",
-                "1Lit/unimi/dsi/fastutil/ints/Int2ObjectMap<Lcxb;>;",
-                "{M7CP^xsLG^s|lf}zb[^X?.?_KJUG:GQ[dS>0&3Tr",
-                "=com/google/common/util/concurrent/AbstractFuture$AtomicHelper",
-                "4()[Lnet/labymod/ingamechat/renderer/EnumMouseAction;",
-                "(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/String;Q",
-                "eyJwcm9maWxlTmFtZSI6ImtyaXN0aXMi",
-                "330b28432fb13a05feb15fec4e5e30cbc4d53d15",
-                "+848:8>(P(R(a(d(g(gO8<068H8Q8e8q8{8O@T@W@a@1@4@=@A@I@V@",
-                "H@5@78O85@?@R@c@",
-                ")(Lnet/minecraft/server/MinecraftServer;)Z",
-                "4(Ljava/util/function/Supplier<Ljava/lang/String;>;)V",
-                "#(Lnet/minecraft/profiler/Snooper;)V",
-                "/(Lnet/minecraft/server/management/PlayerList;)V",
-                "(Ljava/util/List;)Lnet/minecraft/util/math/shapes/VoxelShapes$ILineConsumer;=",
-                "(Lnet/minecraft/entity/Entity;)Ljava/util/function/Consumer;3",
-                "3(Lnet/minecraft/entity/player/ServerPlayerEntity;)V",
-                "2net/minecraft/util/registry/DynamicRegistries$Impl",
-                "5Lnet/minecraft/client/gui/toasts/TutorialToast$Icons;",
-                "(Lnet/minecraft/class_846;Lnet/minecraft/class_846$class_4690;Lnet/minecraft/class_750;)Ljava/lang/Runnable;}",
-                "(Lnet/minecraft/class_255;Lnet/minecraft/class_247;Lnet/minecraft/class_251;ILnet/minecraft/class_251;IIII)Z}",
-                "(Lnet/minecraft/class_5481;Lnet/minecraft/class_5481;)Lnet/minecraft/class_5481;}",
-                "(Lnet/minecraft/class_1297;)Ljava/util/function/BiPredicate;}",
-                "(Lnet/minecraft/class_2558$class_2559;)Lnet/minecraft/class_2558$class_2559;}",
-                "(Lnet/minecraft/class_2568$class_5247;)Lnet/minecraft/class_2568$class_5247;}",
-                "(Lnet/minecraft/class_3191;)I",
-                "(Lnet/minecraft/class_4587;IIIIII)Vs",
-                "0(Lnet/minecraft/class_1132;)Ljava/lang/Runnable;",
-                "(Lnet/minecraft/class_327;)Ljava/util/function/Function;}",
-                "it.unimi.dsi.fastutil.longs.LongArrays$ForkJoinQuickSortCompy",
-                "pastebin",
-                "AimAssist",
-                "nelqr",
-                "bh\kF",
-                "D$@&"6G",
-                "x9D;e",
-                "W`Dh0",
-                "bsWg7",
-                "&-]UR",
-                "@?sPOR",
-                "ili-e",
-                "]O-KfX",
-                "N IO BI UM",
-                "VNejaWA.ModuleCh",
-                "dreampool",
-                "forge.commons.",
-                "hitbox:",
-                "reach:",
-                "0Getenv",
-                "me.didyoumuch.Native",
-                "ldldld.java",
-                "wPy^eopgDr",
-                "]H"JF ",
-                "Az85'. ",
-                "71L;",
-                "V: ",
-                "stubborn.website",
-                "bushroot",
-                "hitbox:",
-                "ASM:",
-                "Val: ",
-                "%width%",
-                "Triggerbot",
-                "event",
-                "baobab",
-                "killaura ",
-                "handler",
-                "VAPE4DLL",
-                "InvisibleHitbox",
-                "expensive",
-                "ASMEventHandler_",
-                "celka",
-                "allatori
-                "magicthein",
-                "chs/Main",
-                "chs/EH",
-                "chs/MM",
-                "chs/Profiller",
-                "chs/90",
-                "Noise Client",
-                "b/time",
-                "clowdy",
-                "neathitbox",
-                "Gk8oA",        
-                "Derick1337",
-                "#THV",
-                "okuma:",
-                "sfxcmd",
-                "/Class<*>;Ljava/lang/String;Ljava/lang/Object;)V",
-                "lookAheadStep",
-                "Zero/Time",
-                "#Hit",
-                "BeackGA",
-                "BreakHitsOn",
-            };
-
-            return searchStrings;
-        }
-
-        static void SendDiscordLog(string playerNickname, string[] foundStrings)
-        {
-            // Формирование сообщения для Discord
-            string logMessage = $"**Проверка {++checkCount}**\nНикнейм: {playerNickname}\nНайденные строки:\n" +
-                               string.Join("\n", foundStrings);
-
-            // Отправка сообщения в Discord
-            using (var client = new HttpClient())
-            {
-                var content = new StringContent(logMessage, System.Text.Encoding.UTF8, "text/plain");
-                client.PostAsync(DiscordWebhookUrl, content).ConfigureAwait(false);
-            }
-        }
-
-        // Функция для проверки прав администратора
-        static bool IsAdministrator()
-        {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
     }
 }
