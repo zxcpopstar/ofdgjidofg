@@ -16,7 +16,7 @@ namespace CheatHunterBTR
         // Счетчик проверок
         private static int checkCount = 0;
 
-        static void Main(string[] args)
+        static void Main(string[] _args) // Изменил args на _args 
         {
             // Проверка прав доступа
             if (!IsAdministrator())
@@ -48,7 +48,7 @@ namespace CheatHunterBTR
             }
 
             // Поиск строк в памяти процесса
-            string[] foundStrings = SearchStringsInProcess(javaProcessId, playerNickname);
+            string[] foundStrings = SearchStringsInProcess(javaProcessId);
 
             // Отправка лога в Discord
             if (foundStrings != null && foundStrings.Length > 0)
@@ -95,20 +95,22 @@ namespace CheatHunterBTR
             return -1;
         }
 
-        static string[] SearchStringsInProcess(int processId, string playerNickname)
+        static string[] SearchStringsInProcess(int processId)
         {
             // Получить объект управления процессом
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process WHERE ProcessId = " + processId);
-            ManagementObject processObject = searcher.Get().Cast<ManagementObject>().FirstOrDefault();
-            if (processObject == null)
-            {
-                Console.WriteLine("Не удалось получить объект процесса Java.");
-                return null;
-            }
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + processId);
 
             // Получить список строк из памяти процесса
-            string[] strings = processObject.GetPropertyValue("CommandLine") as string[];
-            if (strings == null)
+            List<string> strings = new List<string>();
+            foreach (ManagementObject mo in searcher.Get().Cast<ManagementObject>()) // Исправлено приведение
+            {
+                if (mo["CommandLine"] != null)
+                {
+                    strings.Add(mo["CommandLine"].ToString());
+                }
+            }
+
+            if (strings.Count == 0)
             {
                 Console.WriteLine("Не удалось получить список строк из памяти.");
                 return null;
