@@ -18,27 +18,6 @@ namespace CheckStrings
         {
             @"funtime",
             @"\vmdoqhEwxdPU",
-            @"H]vaivPBy\[dIRvLHv", // Правильно экранирован
-            @"rVXAjswRuyTFWaV",
-            @"DNiqO;ae2)2^HEC",
-            @"mXs_os_Pig^o]R]OgS",
-            @"i^HTJ06MQ>K",
-            @"_jc\\", // Важно! обратный слеш экранирует \
-            @"cQxjrTsCXNfroQAk",
-            @"vFokMOqak_MULU",
-            @"psKoqaK",
-            @"r&SF\[!]", // Не забудьте экранирование!
-            @"LZ L\-\.iRLT \[CF6]", // Экранируйте -
-            @"W_lk<Ifo\[2mVqo",
-            @"OS7skZ72v\]oan\_0ZaV",
-            @"^rtS&sj<k82",
-            @"\.Ln1A4<cH3\_UD", // Экранирование .
-            @"YqKZr5&I\dqLSfy\(i", // Экранирование (
-            @"ZXJdf\)P\+xfvWSj", // Экранирование ) и +
-            @"uZ3ot\]43\#'XctU\[", // Экранирование ] и #
-            @"nb\(:\PbrO\(2", // Экранирование (
-            @"\(Laps\;IIZZZ\)Vjav" // Экранирование ( и ;
-            // ... добавьте все остальные шаблоны ...
         };
 
         static void Main(string[] args)
