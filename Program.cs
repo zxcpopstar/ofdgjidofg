@@ -14,9 +14,7 @@ public class CheatHunterBTR
     private const string WEBHOOK_URL = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv"; // Замените на ваш webhook
     private const string STRINGS_FILE = "strings/strings.txt";
     private static long checkId = 0;
-    private static bool checking = false;
     private static string[] stringsToCheck;
-
 
     public static async Task Main(string[] args)
     {
@@ -27,12 +25,11 @@ public class CheatHunterBTR
             return;
         }
 
-        Console.WriteLine("CheatHunterBTR запущен.");
-
-        while (true)
+        string nick;
+        do
         {
-            Console.Write("Введите никнейм для проверки (или 'exit' для выхода): ");
-            string nick = Console.ReadLine();
+            Console.Write("Введите свой никнейм на сервере (или 'exit' для выхода): ");
+            nick = Console.ReadLine();
 
             if (string.IsNullOrEmpty(nick))
             {
@@ -49,7 +46,6 @@ public class CheatHunterBTR
             try
             {
                 checkId++;
-                checking = true;
                 Console.WriteLine($"Проверка #{checkId} для {nick}...");
 
                 using (Process javawProcess = new Process())
@@ -58,33 +54,46 @@ public class CheatHunterBTR
                     javawProcess.StartInfo.RedirectStandardOutput = true;
                     javawProcess.StartInfo.UseShellExecute = false;
                     javawProcess.StartInfo.CreateNoWindow = true;
-                    javawProcess.Start();
 
-                    var foundStrings = await CheckForStringsAsync(nick, stringsToCheck, javawProcess, TimeSpan.FromSeconds(10));
-                    checking = false;
-
-                    string message = FormatDiscordMessage(nick, checkId, foundStrings);
-                    await SendDiscordMessage(message);
-
-
-                    javawProcess.WaitForExit();
-                    javawProcess.Close();
-
-                    Console.WriteLine("Нажмите Enter для следующей проверки, или 'exit' для выхода:");
-                    string exitInput = Console.ReadLine();
-                    if (exitInput.ToLower() == "exit")
+                    try
                     {
-                        Console.WriteLine("Чекер закрыт.");
-                        return;
+                        javawProcess.Start();
+                        var foundStrings = await CheckForStringsAsync(nick, stringsToCheck, javawProcess, TimeSpan.FromSeconds(10));
+                        await SendDiscordMessage(FormatDiscordMessage(nick, checkId, foundStrings));
+                        javawProcess.WaitForExit();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Ошибка запуска или работы javaw: {ex.Message}");
+                        javawProcess.Kill();
+                    }
+                    finally
+                    {
+                        javawProcess.Close();
                     }
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка: {ex.Message}");
-                checking = false;
             }
+        } while (true);
+    }
+
+    private static string FormatDiscordMessage(string nick, long checkId, List<string> foundStrings)
+    {
+        string message = $@"```
+{nick}; #{checkId}; ";
+        if (foundStrings.Count > 0)
+        {
+            message += string.Join(", ", foundStrings);
         }
+        else
+        {
+            message += "Ничего не найдено";
+        }
+        message += "\n```";
+        return message;
     }
 
     private static async Task<List<string>> CheckForStringsAsync(string nick, string[] stringsToCheck, Process javawProcess, TimeSpan timeout)
@@ -94,26 +103,27 @@ public class CheatHunterBTR
 
         try
         {
-            using var output = javawProcess.StandardOutput;
-            string processOutput = await output.ReadToEndAsync(cancellationTokenSource.Token);
-
-            foreach (string str in stringsToCheck)
+            using (var output = javawProcess.StandardOutput)
             {
-                if (Regex.IsMatch(processOutput, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
+                string processOutput = await output.ReadToEndAsync(cancellationTokenSource.Token);
+
+                foreach (string str in stringsToCheck)
                 {
-                    foundStrings.Add(str);
+                    if (Regex.IsMatch(processOutput, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
+                    {
+                        foundStrings.Add(str);
+                    }
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ошибка: {ex.Message}");
+            Console.WriteLine($"Ошибка в CheckForStringsAsync: {ex.Message}");
             javawProcess.Kill();
             return new List<string>();
         }
         return foundStrings;
     }
-
 
     private static string[] ReadStringsFromFile(string filePath)
     {
@@ -134,16 +144,13 @@ public class CheatHunterBTR
         }
     }
 
-
     private static async Task SendDiscordMessage(string message)
     {
         try
         {
             using HttpClient client = new HttpClient();
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, WEBHOOK_URL)
-            {
-                Content = new StringContent($@"{{""content"":""{message}"",""username"":""CheatHunter""}}", Encoding.UTF8, "application/json")
-            };
+            using var request = new HttpRequestMessage(HttpMethod.Post, WEBHOOK_URL);
+            request.Content = new StringContent($@"{{""content"":""{message}"",""username"":""CheatHunter""}}", Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
