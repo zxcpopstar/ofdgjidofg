@@ -5,36 +5,44 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 public class CheatHunterBTR
 {
-    private const string WEBHOOK_URL = "https://discord.com/api/webhooks/1296836559471120459/91DxRiMCMauf9oqWpJEQ7IqjoTrerPdAx3PE2xcg0zbqzPY9FJXowOacz0iqRx8ye1Dj"; // Замените на ваш webhook
-    private const string STRINGS_FILE = "strings/strings.txt";
-    private static readonly object locker = new object();
-    private static long checkId = 0;
-    private static bool checking = false;
+    private const string WEBHOOK_URL = "https://discord.com/api/webhooks/1296836559471120459/91DxRiMCMauf9oqWpJEQ7IqjoTrerPdAx3PE2xcg0zbqzPY9FJXowOacz0iqRx8ye1Dj";
+    private const string STRINGS_FILE_PATH = "strings.txt";
     private static string[] stringsToCheck;
-
 
     public static async Task Main(string[] args)
     {
-        stringsToCheck = ReadStringsFromFile(STRINGS_FILE);
-        if (stringsToCheck == null)
+        Console.WriteLine("CheatHunterBTR запущен.");
+
+        try
         {
-            Console.WriteLine($"Ошибка: файл '{STRINGS_FILE}' не найден или не может быть прочитан.");
+            stringsToCheck = File.ReadAllLines(STRINGS_FILE_PATH).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
+            if (stringsToCheck == null || stringsToCheck.Length == 0)
+            {
+                Console.WriteLine($"Ошибка: файл '{STRINGS_FILE_PATH}' пуст или не найден. Программа завершается.");
+                return;
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine($"Ошибка: файл '{STRINGS_FILE_PATH}' не найден. Программа завершается.");
             return;
         }
-
-        Console.WriteLine("CheatHunterBTR запущен.");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при чтении файла: {ex.Message}. Программа завершается.");
+            return;
+        }
 
         string nick;
         do
         {
-            Console.Write("Введите никнейм для проверки (или 'exit' для выхода): ");
+            Console.Write("Введите свой никнейм: ");
             nick = Console.ReadLine();
 
             if (string.IsNullOrEmpty(nick))
@@ -51,107 +59,55 @@ public class CheatHunterBTR
 
             try
             {
-                lock (locker)
+                using (var process = new Process())
                 {
-                    checkId++;
-                }
-                checking = true;
-                Console.WriteLine($"Проверка #{checkId} для {nick}...");
+                    process.StartInfo.FileName = "javaw.exe";
+                    process.StartInfo.Arguments = "путь_к_вашему_приложению.jar";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.CreateNoWindow = true;
 
-                using (Process javawProcess = new Process())
-                {
-                    javawProcess.StartInfo.FileName = "javaw.exe"; // или "java.exe"
-                    javawProcess.StartInfo.RedirectStandardOutput = true;
-                    javawProcess.StartInfo.UseShellExecute = false;
-                    javawProcess.StartInfo.CreateNoWindow = true;
-                    javawProcess.Start();
+                    process.Start();
 
-                    var foundStrings = await CheckForStringsAsync(nick, stringsToCheck, javawProcess, TimeSpan.FromSeconds(10));
-                    checking = false;
+                    string output = await process.StandardOutput.ReadToEndAsync();
+                    string error = await process.StandardError.ReadToEndAsync();
 
-                    if (foundStrings.Count > 0)
+                    if (!string.IsNullOrEmpty(error))
                     {
-                        await SendDiscordMessage($"{nick}; #{checkId}; {string.Join(", ", foundStrings)}");
+                        Console.WriteLine($"Ошибка от javaw: {error}");
+                        await SendDiscordMessage($"Ошибка проверки для {nick}: {error}");
+                        continue;
                     }
-                    else
-                    {
-                        await SendDiscordMessage($"{nick}; #{checkId};  Ничего не найдено");
-                    }
-                    javawProcess.WaitForExit();
+
+                    var foundStrings = FindStrings(output, stringsToCheck);
+
+                    string logMessage = $"{nick}: {string.Join(", ", foundStrings)}";
+                    await SendDiscordMessage($"```{logMessage}```");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка: {ex.Message}");
-                checking = false;
+                Console.WriteLine($"Ошибка во время проверки: {ex.Message}");
             }
         } while (true);
     }
 
 
-    private static async Task<List<string>> CheckForStringsAsync(string nick, string[] stringsToCheck, Process javawProcess, TimeSpan timeout)
+    private static List<string> FindStrings(string text, string[] searchStrings)
     {
-        var foundStrings = new List<string>();
-        var cancellationTokenSource = new CancellationTokenSource(timeout);
-
-        try
+        var found = new List<string>();
+        foreach (string str in searchStrings)
         {
-            using var output = javawProcess.StandardOutput;
-            string processOutput = await output.ReadToEndAsync(cancellationTokenSource.Token);
-
-            foreach (string str in stringsToCheck)
+            if (Regex.IsMatch(text, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
             {
-                if (Regex.IsMatch(processOutput, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
-                {
-                    foundStrings.Add(str);
-                }
+                found.Add(str);
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка: {ex.Message}");
-            javawProcess.Kill();
-            return new List<string>();
-        }
-        return foundStrings;
+        return found;
     }
-
-
-    private static string[] ReadStringsFromFile(string filePath)
-    {
-        try
-        {
-            if (!File.Exists(filePath))
-            {
-                Console.WriteLine($"Файл '{filePath}' не найден.");
-                return null;
-            }
-
-            return File.ReadAllLines(filePath).Where(line => !string.IsNullOrWhiteSpace(line)).ToArray();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка чтения файла: {ex.Message}");
-            return null;
-        }
-    }
-
 
     private static async Task SendDiscordMessage(string message)
     {
-        try
-        {
-            using HttpClient client = new HttpClient();
-            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, WEBHOOK_URL)
-            {
-                Content = new StringContent($@"{{""content"":""{message}"",""username"":""CheatHunter""}}", Encoding.UTF8, "application/json")
-            };
-            using HttpResponseMessage response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка отправки сообщения в Discord: {ex.Message}");
-        }
     }
 }
