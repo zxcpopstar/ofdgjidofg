@@ -8,13 +8,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 public class CheatHunterBTR
 {
-    private const string WEBHOOK_URL = "https://discord.com/api/webhooks/1295397605378887700/osasnvN87qmehkcFreGL33jgw-YmHdQTZ1b1idfDYb79C23lNT-oo7crS2S3ayG48Exv"; // Замените на ваш webhook
+    private const string WEBHOOK_URL = "https://discord.com/api/webhooks/1296836559471120459/91DxRiMCMauf9oqWpJEQ7IqjoTrerPdAx3PE2xcg0zbqzPY9FJXowOacz0iqRx8ye1Dj"; // Замените на ваш webhook
     private const string STRINGS_FILE = "strings/strings.txt";
+    private static readonly object locker = new object();
     private static long checkId = 0;
+    private static bool checking = false;
     private static string[] stringsToCheck;
+
 
     public static async Task Main(string[] args)
     {
@@ -25,10 +29,12 @@ public class CheatHunterBTR
             return;
         }
 
+        Console.WriteLine("CheatHunterBTR запущен.");
+
         string nick;
         do
         {
-            Console.Write("Введите свой никнейм на сервере (или 'exit' для выхода): ");
+            Console.Write("Введите никнейм для проверки (или 'exit' для выхода): ");
             nick = Console.ReadLine();
 
             if (string.IsNullOrEmpty(nick))
@@ -45,56 +51,43 @@ public class CheatHunterBTR
 
             try
             {
-                checkId++;
+                lock (locker)
+                {
+                    checkId++;
+                }
+                checking = true;
                 Console.WriteLine($"Проверка #{checkId} для {nick}...");
 
                 using (Process javawProcess = new Process())
                 {
-                    javawProcess.StartInfo.FileName = "javaw.exe";
+                    javawProcess.StartInfo.FileName = "javaw.exe"; // или "java.exe"
                     javawProcess.StartInfo.RedirectStandardOutput = true;
                     javawProcess.StartInfo.UseShellExecute = false;
                     javawProcess.StartInfo.CreateNoWindow = true;
+                    javawProcess.Start();
 
-                    try
+                    var foundStrings = await CheckForStringsAsync(nick, stringsToCheck, javawProcess, TimeSpan.FromSeconds(10));
+                    checking = false;
+
+                    if (foundStrings.Count > 0)
                     {
-                        javawProcess.Start();
-                        var foundStrings = await CheckForStringsAsync(nick, stringsToCheck, javawProcess, TimeSpan.FromSeconds(10));
-                        await SendDiscordMessage(FormatDiscordMessage(nick, checkId, foundStrings));
-                        javawProcess.WaitForExit();
+                        await SendDiscordMessage($"{nick}; #{checkId}; {string.Join(", ", foundStrings)}");
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine($"Ошибка запуска или работы javaw: {ex.Message}");
-                        javawProcess.Kill();
+                        await SendDiscordMessage($"{nick}; #{checkId};  Ничего не найдено");
                     }
-                    finally
-                    {
-                        javawProcess.Close();
-                    }
+                    javawProcess.WaitForExit();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Ошибка: {ex.Message}");
+                checking = false;
             }
         } while (true);
     }
 
-    private static string FormatDiscordMessage(string nick, long checkId, List<string> foundStrings)
-    {
-        string message = $@"```
-{nick}; #{checkId}; ";
-        if (foundStrings.Count > 0)
-        {
-            message += string.Join(", ", foundStrings);
-        }
-        else
-        {
-            message += "Ничего не найдено";
-        }
-        message += "\n```";
-        return message;
-    }
 
     private static async Task<List<string>> CheckForStringsAsync(string nick, string[] stringsToCheck, Process javawProcess, TimeSpan timeout)
     {
@@ -103,27 +96,26 @@ public class CheatHunterBTR
 
         try
         {
-            using (var output = javawProcess.StandardOutput)
-            {
-                string processOutput = await output.ReadToEndAsync(cancellationTokenSource.Token);
+            using var output = javawProcess.StandardOutput;
+            string processOutput = await output.ReadToEndAsync(cancellationTokenSource.Token);
 
-                foreach (string str in stringsToCheck)
+            foreach (string str in stringsToCheck)
+            {
+                if (Regex.IsMatch(processOutput, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
                 {
-                    if (Regex.IsMatch(processOutput, $"(?i){Regex.Escape(str)}", RegexOptions.IgnoreCase))
-                    {
-                        foundStrings.Add(str);
-                    }
+                    foundStrings.Add(str);
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Ошибка в CheckForStringsAsync: {ex.Message}");
+            Console.WriteLine($"Ошибка: {ex.Message}");
             javawProcess.Kill();
             return new List<string>();
         }
         return foundStrings;
     }
+
 
     private static string[] ReadStringsFromFile(string filePath)
     {
@@ -144,13 +136,16 @@ public class CheatHunterBTR
         }
     }
 
+
     private static async Task SendDiscordMessage(string message)
     {
         try
         {
             using HttpClient client = new HttpClient();
-            using var request = new HttpRequestMessage(HttpMethod.Post, WEBHOOK_URL);
-            request.Content = new StringContent($@"{{""content"":""{message}"",""username"":""CheatHunter""}}", Encoding.UTF8, "application/json");
+            using HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, WEBHOOK_URL)
+            {
+                Content = new StringContent($@"{{""content"":""{message}"",""username"":""CheatHunter""}}", Encoding.UTF8, "application/json")
+            };
             using HttpResponseMessage response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
